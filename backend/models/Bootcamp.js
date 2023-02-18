@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const BootcampSchema = new mongoose.Schema(
   {
@@ -38,4 +39,10 @@ const BootcampSchema = new mongoose.Schema(
       required: [true, 'Please add an address']
     }
   });
+
+  // Create bootcamp slug from middleware
+  BootcampSchema.pre('save',function(next){
+    this.slug = slugify(this.name, {lower: true})
+    next();
+  })
   module.exports = mongoose.model('Bootcamp', BootcampSchema);
