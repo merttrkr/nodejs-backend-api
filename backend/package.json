@@ -17,7 +17,8 @@
       "dotenv":"^16.0.3",
       "slugify":"^1.6.5",
       "node-geocoder":"^4.2.0",
-      "bcryptjs": "2.4.3"
+      "bcryptjs": "2.4.3",
+      "fileupload":"^1.0.0"
      
     },
     "devDependencies": {
