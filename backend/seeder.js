@@ -29,8 +29,8 @@ const courses = JSON.parse(
 // Import into DB
 const importData = async () => {
   try {
-    await Bootcamp.create(bootcamps);
-    //await Course.create(courses);
+    //await Bootcamp.create(bootcamps);
+    await Course.create(courses);
 
     console.log('data imported...');
     process.exit();
