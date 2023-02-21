@@ -20,7 +20,8 @@
       "bcryptjs": "2.4.3",
       "express-fileupload":"^1.0.0",
       "jsonwebtoken":"^9.0.0",
-      "randomatic":"^3.1.1"
+      "randomatic":"^3.1.1",
+      "cookie-parser":"^1.4.6"
     },
     "devDependencies": {
       "nodemon": "^2.0.4"

@@ -52,14 +52,23 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse('Invalid credentials', 401));
   }
-
-  //  Create token
-  const token =user.getSignedJwtToken();
-
-  res.status(200).json({
-    success: true,
-    token
-  });
+  sendTokenResponse(user,200,res);
 
 });
 
+//get token from mode create cookie and send response
+const sendTokenResponse =(user,statusCode, res) => {
+  //  Create token
+  const token = user.getSignedJwtToken();
+
+  const options = {
+    expries: new Date(Date.now() + ProcessingInstruction.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly:true // only accesthrough client side
+  };
+  //send response
+  res.status(statusCode).cookie('token', token, options).json({
+    success: true,
+    token,
+  });
+};
