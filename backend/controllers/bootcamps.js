@@ -21,7 +21,7 @@ exports.getBootcamp = asyncHandler(async(req, res, next) => {
     const bootcamp = await Bootcamp.findById(req.params.id);
 
     if (!bootcamp) {
-      next(err);
+      next(new ErrorResponse(`No bootcamp with the id of ${req.params.id}`),404);
     }
     res.status(200).json({
       success: true,
@@ -33,17 +33,15 @@ exports.getBootcamp = asyncHandler(async(req, res, next) => {
 //  @desc       create new bootcamp
 //  @route      POST /api/v1/bootcamps
 //  @access     Private
-exports.createBootcamps = async (req, res, next) => {
-  try {
+exports.createBootcamps = asyncHandler(async (req, res, next) => {
+  
     const bootcamp = await Bootcamp.create(req.body);
     res.status(201).json({
       success: true,
       data: bootcamp,
     });
-  } catch (err) {
-    next(err);
-  }
-};
+
+});
 //  @desc       Update bootcamp
 //  @route      PUT /api/v1/bootcamps:/id
 //  @access     Private
@@ -55,7 +53,7 @@ exports.updateBootcamps = asyncHandler(async (req, res, next) => {
     });
 
     if (!bootcamp) {
-      return next(err);
+      return next(new ErrorResponse(`No bootcamp with the id of ${req.params.id}`),404);
     }
     
     res.status(200).json({
@@ -68,25 +66,21 @@ exports.updateBootcamps = asyncHandler(async (req, res, next) => {
 //  @desc       delete bootcamp
 //  @route      DELETE /api/v1/bootcamps:/id
 //  @access     Private
-exports.deleteBootcamps = async (req, res, next) => {
-  try {
+exports.deleteBootcamps = asyncHandler(async (req, res, next) => {
+  
     const bootcamp = await Bootcamp.findById(req.params.id);
-
     if (!bootcamp) {
-      return next(err);
-    }
-    
+      return next(new ErrorResponse(`No bootcamp with the id of ${req.params.id}`),404);
+    }  
+
     //trigger middleware
     bootcamp.remove();
-
     res.status(200).json({
       success: true,
       data: bootcamp,
     });
-  } catch (err) {
-    next(err);
-  }
-};
+ 
+});
 
 //  @desc       get bootcamps within a radius
 //  @route      GET /api/v1/bootcamps/radius/:zipcode/:distance/
@@ -123,7 +117,7 @@ exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id);
 
   if (!bootcamp) {
-    return next(err);
+    return next(new ErrorResponse(`No bootcamp with the id of ${req.params.id}`),404);
   }
 
   if (!req.files) {
@@ -155,16 +149,12 @@ exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`problem with file upload`,500)
       );
     }
-
     await Bootcamp.findByIdAndUpdate(req.params.id, {photo: file.name});
-    console.log(file.name);
-
     res.status(200).json({
     success: true,
     data: file.name
   });
+
   });
   
-  
-
 });
