@@ -22,7 +22,7 @@ const app = express();
 app.use(express.json());
 
 //cookie parser
-app.use(cookieParser);
+app.use(cookieParser());
 
 //middleware Dev logging
 if (process.env.NODE_ENV === 'development') {
