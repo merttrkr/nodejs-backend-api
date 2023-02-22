@@ -10,7 +10,7 @@ const Course = require('../models/Course');
 const advancedResults = require('../middleware/advancedResults');
 
 const router = express.Router({ mergeParams: true });
-
+const {protect} = require('../middleware/auth');
 router
   .route('/')
   .get(
@@ -20,8 +20,8 @@ router
     }),
     getCourses
   )
-  .post(addCourse);
+  .post(protect,addCourse);
 
-router.route('/:id').get(getCourse).put(updateCourse).delete(deleteCourse);
+router.route('/:id').get(getCourse).put(protect,updateCourse).delete(protect,deleteCourse);
 
 module.exports = router;
