@@ -48,3 +48,18 @@ exports.authorize = (...roles)=>{
     next();
   }
 }
+
+// check existence of resource and ownership
+
+exports.checkIfExistsAndOwned = (Model) => asyncHandler(async (req, res, next) => {
+  let resource = await Model.findById(req.params.id);
+  if (!resource) {
+    return next(new ErrorResponse(`No resource with the id of ${req.params.id}`),404);
+  }  
+
+   //make sure user is resource owner
+   if (resource.user.toString() !== req.user.id && req.user.role !=='admin') {
+      return next(new ErrorResponse(`user id ${req.user.id} is not authorized to delete this ${resource['name']} `,401));
+  }
+  next();
+});

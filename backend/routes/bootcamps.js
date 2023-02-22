@@ -17,7 +17,7 @@ const advancedResults = require('../middleware/advancedResults');
 // include other resource routers
 const courseRouter = require('./courses');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, checkIfExistsAndOwned } = require('../middleware/auth');
 
 // Re-route into other resource routers
 router.use('/:bootcampId/courses', courseRouter);
@@ -33,7 +33,7 @@ router
   .route('/:id')
   .get(getBootcamp)
   .put(protect, authorize('publisher', 'admin'), updateBootcamps)
-  .delete(protect, authorize('publisher', 'admin'), deleteBootcamps);
+  .delete(protect, authorize('publisher', 'admin'),checkIfExistsAndOwned(Bootcamp), deleteBootcamps);
 
 router
   .route('/:id/photo')
