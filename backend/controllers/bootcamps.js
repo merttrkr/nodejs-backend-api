@@ -23,6 +23,7 @@ exports.getBootcamp = asyncHandler(async(req, res, next) => {
     if (!bootcamp) {
       next(new ErrorResponse(`No bootcamp with the id of ${req.params.id}`),404);
     }
+
     res.status(200).json({
       success: true,
       data: bootcamp,
@@ -60,18 +61,7 @@ exports.createBootcamps = asyncHandler(async (req, res, next) => {
 //  @access     Private
 exports.updateBootcamps = asyncHandler(async (req, res, next) => {
 
-    let bootcamp = await Bootcamp.findById(req.params.id);
-    if (!bootcamp) {
-      return next(new ErrorResponse(`No bootcamp with the id of ${req.params.id}`,404));
-    }
-    
-    //make sure user is bootcamp owner
-    if (bootcamp.user.toString() !== req.user.id && req.user.role !=='admin') {
-      return next(new ErrorResponse(`user id is not authorized to update this bootcamp ${req.user.id}`,401));
-
-    }
-
-    bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+    let bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     });
@@ -131,10 +121,6 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
 
   const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id);
-
-  if (!bootcamp) {
-    return next(new ErrorResponse(`No bootcamp with the id of ${req.params.id}`),404);
-  }
 
   if (!req.files) {
     return next(

@@ -59,7 +59,7 @@ exports.checkIfExistsAndOwned = (Model) => asyncHandler(async (req, res, next) =
 
    //make sure user is resource owner
    if (resource.user.toString() !== req.user.id && req.user.role !=='admin') {
-      return next(new ErrorResponse(`user id ${req.user.id} is not authorized to delete this ${resource['name']} `,401));
+      return next(new ErrorResponse(`user id ${req.user.id} is not authorized to update this ${resource['name']} `,401));
   }
   next();
 });
