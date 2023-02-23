@@ -41,7 +41,13 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/users/:id
 // @access    Private/Admin
 exports.updateUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+  let user = await User.findById(req.params.id);
+
+  if(!user){
+    return next(new ErrorResponse(`No user with the id of ${req.params.id}`, 404));
+  }
+
+  user = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true
   });
@@ -56,6 +62,12 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/users/:id
 // @access    Private/Admin
 exports.deleteUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if(!user){
+    return next(new ErrorResponse(`No user with the id of ${req.params.id}`, 404));
+  }
+
   await User.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
