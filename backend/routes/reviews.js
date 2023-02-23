@@ -12,7 +12,7 @@ const Review = require('../models/Review');
 const router = express.Router({ mergeParams: true });
 
 const advancedResults = require('../middleware/advancedResults');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, checkIfExistsAndOwned } = require('../middleware/auth');
 
 router
   .route('/')
@@ -28,7 +28,7 @@ router
 router
   .route('/:id')
   .get(getReview)
-  .put(protect, authorize('user', 'admin'), updateReview)
-  .delete(protect, authorize('user', 'admin'), deleteReview);
+  .put(protect, authorize('user', 'admin'),checkIfExistsAndOwned(Review), updateReview)
+  .delete(protect, authorize('user', 'admin'),checkIfExistsAndOwned(Review), deleteReview);
 
 module.exports = router;
