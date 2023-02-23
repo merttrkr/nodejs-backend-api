@@ -78,10 +78,10 @@ exports.updateBootcamps = asyncHandler(async (req, res, next) => {
 //  @access     Private
 exports.deleteBootcamps = asyncHandler(async (req, res, next) => {
   
-    bootcamp.findByIdAndDelete(req.params.id);
+  await Bootcamp.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,
-      data: bootcamp,
+      data: {},
     });
  
 });
