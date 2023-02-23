@@ -14,6 +14,7 @@ const router = express.Router({ mergeParams: true });
 const advancedResults = require('../middleware/advancedResults');
 const { protect, authorize } = require('../middleware/auth');
 
+//anything below uses protect and authorize(admin)
 router.use(protect);
 router.use(authorize('admin'));
 
