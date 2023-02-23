@@ -10,7 +10,8 @@ const Course = require('../models/Course');
 const advancedResults = require('../middleware/advancedResults');
 
 const router = express.Router({ mergeParams: true });
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, checkIfExistsAndOwned } = require('../middleware/auth');
+const Bootcamp = require('../models/Bootcamp');
 router
   .route('/')
   .get(
@@ -20,12 +21,12 @@ router
     }),
     getCourses
   )
-  .post(protect, authorize('publisher', 'admin'), addCourse);
+  .post(protect, authorize('publisher', 'admin'),checkIfExistsAndOwned(Bootcamp), addCourse);
 
 router
   .route('/:id')
   .get(getCourse)
-  .put(protect, authorize('publisher', 'admin'), updateCourse)
-  .delete(protect, deleteCourse);
+  .put(protect, authorize('publisher', 'admin'),checkIfExistsAndOwned(Course), updateCourse)
+  .delete(protect,checkIfExistsAndOwned(Course), deleteCourse);
 
 module.exports = router;

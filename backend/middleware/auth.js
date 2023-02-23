@@ -52,14 +52,17 @@ exports.authorize = (...roles)=>{
 // check existence of resource and ownership
 
 exports.checkIfExistsAndOwned = (Model) => asyncHandler(async (req, res, next) => {
-  let resource = await Model.findById(req.params.id);
+  let id = Object.values(req.params)[0];
+  let resource = await Model.findById(id);
   if (!resource) {
-    return next(new ErrorResponse(`No resource with the id of ${req.params.id}`),404);
+    console.log(req.params);
+    return next(new ErrorResponse(`No resource with the id of ${id}`),404);
   }  
-
+  
    //make sure user is resource owner
+   console.log(resource.user,"req user id",req.user.id);
    if (resource.user.toString() !== req.user.id && req.user.role !=='admin') {
-      return next(new ErrorResponse(`user id ${req.user.id} is not authorized to update this ${resource['name']} `,401));
+      return next(new ErrorResponse(`user id ${req.user.id} is not authorized to update this resource} `,401));
   }
   next();
 });
