@@ -91,7 +91,7 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.deleteReview = asyncHandler(async (req, res, next) => {
 
-  await Review.remove();
+  await Review.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success: true,

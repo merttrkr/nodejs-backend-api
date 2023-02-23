@@ -78,9 +78,7 @@ exports.updateBootcamps = asyncHandler(async (req, res, next) => {
 //  @access     Private
 exports.deleteBootcamps = asyncHandler(async (req, res, next) => {
   
-    const bootcamp = await Bootcamp.findById(req.params.id);
-    //trigger middleware
-    bootcamp.remove();
+    bootcamp.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,
       data: bootcamp,
