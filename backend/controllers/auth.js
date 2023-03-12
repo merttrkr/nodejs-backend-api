@@ -69,7 +69,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 };
 
 //  @desc       get current logged in user
-//  @route      POST /api/v1/auth/me
+//  @route      GET /api/v1/auth/me
 //  @access     Private
 exports.getMe = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
@@ -81,7 +81,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 });
 
 //  @desc       forgot passwords
-//  @route      POST /api/v1/auth/forgotPassword
+//  @route      POST /api/v1/auth/forgotPasswords
 //  @access     Public
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
@@ -94,11 +94,9 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const resetToken = user.getResetPasswordToken();
 
   await user.save({ validateBeforeSave: false });
-
+  
   // Create reset url
-  const resetUrl = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/auth/resetpassword/${resetToken}`;
+  const resetUrl = `${req.get('Referrer')}resetpassword/${resetToken}`;
 
   const message = `You are receiving this email because you (or someone else) has requested the reset of a password. 
   Please click this link to: \n\n ${resetUrl} reset your passwords`;
@@ -108,6 +106,8 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
       email: user.email,
       subject: 'Password reset token',
       message,
+      reset: resetUrl,
+      
     });
 
     res.status(200).json({ success: true, data: 'Email sent' });

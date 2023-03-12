@@ -12,7 +12,7 @@ const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const cors = require('cors');
-
+const fastifyCors = require('fastify')
 
 //env vars
 dotenv.config({ path: './config/config.env' });
@@ -28,6 +28,7 @@ const reviews = require('./routes/reviews');
 
 const app = express();
 
+
 //body parser
 app.use(express.json());
 
@@ -38,6 +39,13 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+const corsOptions ={
+  origin:'http://localhost:5173', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200,
+}
+
+app.use(cors(corsOptions)) // Use this after the variable declaration
 
 //file uploading
 app.use(fileupload());
@@ -61,11 +69,12 @@ app.use(limiter);
 // prevent http param pollution
 app.use(hpp()); 
 
-// prevent cors attack
-app.use(cors());
+
 
 //set static folder
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 //mount routers
 app.use('/api/v1/bootcamps', bootcamps);
@@ -76,12 +85,27 @@ app.use('/api/v1/reviews',reviews);
 
 app.use(errorHandler);
 
+// var allowedOrigins = ['http://localhost:5173'];
+// app.use(cors({
+//   origin: function(origin, callback){
+//     // allow requests with no origin 
+//     // (like mobile apps or curl requests)
+//     if(!origin) return callback(null, true);
+//     if(allowedOrigins.indexOf(origin) === -1){
+//       var msg = 'The CORS policy for this site does not ' +
+//                 'allow access from the specified Origin.';
+//       return callback(new Error(msg), false);
+//     }
+//     return callback(null, true);
+//   }
+// }));
 
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(
                             PORT,
                             console.log(`server is running on port ${PORT}`));
+
 //handle unhandled promise rejections
 process.on('unhandledRejection',(err,promise)=>{
     console.log(`Error: ${err.message}`);
