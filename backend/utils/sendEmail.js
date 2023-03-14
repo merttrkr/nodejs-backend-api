@@ -15,7 +15,7 @@ const sendEmail = async (options) => {
     to: options.email,
     subject: options.subject,
     text: options.message,
-    html: `<a href="${options.reset}" class="button">Go to reset</a>`
+    html: `<a href="${options.reset}" class="button">${options.message}</a>`
   };
 
   const info = await transporter.sendMail(message);

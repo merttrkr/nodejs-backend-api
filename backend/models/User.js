@@ -98,16 +98,12 @@ UserSchema.methods.getResetPasswordToken = function () {
 // Generate email confirm token
 UserSchema.methods.generateEmailConfirmToken = function (next) {
   // email confirmation token
-  const confirmationToken = crypto.randomBytes(20).toString('hex');
+  const confirmationToken = crypto.randomBytes(5).toString('hex');
 
-  this.confirmEmailToken = crypto
-    .createHash('sha256')
-    .update(confirmationToken)
-    .digest('hex');
+  this.confirmEmailToken =confirmationToken;
 
-  const confirmTokenExtend = crypto.randomBytes(100).toString('hex');
-  const confirmTokenCombined = `${confirmationToken}.${confirmTokenExtend}`;
-  return confirmTokenCombined;
+
+  return confirmationToken;
 };
 
 module.exports = mongoose.model('User', UserSchema);

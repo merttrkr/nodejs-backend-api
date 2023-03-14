@@ -122,6 +122,45 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   }
 });
 
+//  @desc       send verification email
+//  @route      POST /api/v1/auth/sendverificationemail
+//  @access     Private
+exports.sendVerificationEmail = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.user.email });
+
+  // Get reset token
+  const resetToken = user.generateEmailConfirmToken();
+  
+  // Create reset url
+  const resetUrl = `${req.get('Referrer')}verifyemail/${resetToken}`;
+  console.log("reset token" ,resetToken);
+  const message = `You are receiving this email because you (or someone else) has requested the verification of email. 
+  Please click this link to verify your email: \n\n ${resetUrl} `;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Email verification token',
+      message,
+      reset: resetUrl,
+      
+    });
+    user.save();
+    console.log("confirm email ",user.confirmEmailToken);
+
+    res.status(200).json({ success: true, data: 'Email sent' });
+  } catch (err) {
+    console.log(err);
+    user.confirmEmailToken = undefined;
+    user.gen = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorResponse('Email could not be sent', 500));
+  }
+
+});
+
 //  @desc       reset passwords
 //  @route      PUT /api/v1/auth/resetpassword/:resettoken
 //  @access     Public
@@ -146,6 +185,30 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   user.password = req.body.password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
+});
+
+//  @desc       verify email
+//  @route      GET /api/v1/auth/verifyemail/:verificationCode
+//  @access     Private
+exports.verifyEmail = asyncHandler(async (req, res, next) => {
+  
+  //find user through resetpasswordToken
+  const verificationToken = req.params.verificationCode
+  console.log("token",verificationToken);
+  const user = await User.findOne({
+    confirmEmailToken: verificationToken
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid token', 400));
+  }
+
+  // Set new password
+  user.confirmEmailToken = undefined;
+  user.isEmailConfirmed = true;
   await user.save();
 
   sendTokenResponse(user, 200, res);
@@ -202,3 +265,4 @@ exports.logout = asyncHandler(async (req, res, next) => {
     data: {},
   });
 });
+
